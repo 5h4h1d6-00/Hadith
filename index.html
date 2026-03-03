@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Islamic Hadith App</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loader">
+  <div class="loader-content">
+    <div class="spinner"></div>
+    <h2>Loading...</h2>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Confirm Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content small">
+    <p id="confirmText"></p>
+    <div class="modal-actions">
+      <button id="confirmYes">Yes</button>
+      <button onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Hadith Modal -->
+<div id="hadithModal" class="modal">
+  <div class="modal-content">
+    <h2>Add Hadith</h2>
+
+    <select id="categorySelect"></select>
+    <input type="text" id="newCategory" placeholder="Or Create New Category">
+
+    <textarea id="hadithText" placeholder="Enter Hadith Text"></textarea>
+    <input type="text" id="hadithReference" placeholder="Reference">
+
+    <button onclick="saveHadith()">Save Hadith</button>
+  </div>
+</div>
+
+<!-- Navigation -->
+<header>
+  <div class="logo">Shahid Saleem</div>
+
+  <div class="nav-right">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button onclick="toggleTheme()">🌙</button>
+    <button onclick="openModal()">Add Hadith +</button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main id="app"></main>
+
+<script src="script.js"></script>
+</body>
+</html>
