@@ -3,66 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Islamic Hadith App</title>
+<title>Shahid Saleem</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+body {
+  background: radial-gradient(circle at 70% 20%, rgba(255,255,255,0.08), transparent 40%),
+              radial-gradient(circle at bottom, #0b0c2a 0%, #020312 60%, #000 100%);
+  color: #fff;
+  overflow-x: hidden;
+  min-height:100vh;
+}
 
-<link rel="stylesheet" href="style.css">
+/* Full Background Layer */
+.background {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:-1;
+  overflow:hidden;
+}
+
+/* Stars */
+.star {
+  position:absolute;
+  width:2px; height:2px;
+  background:white;
+  border-radius:50%;
+  animation: twinkle 2s infinite ease-in-out;
+}
+@keyframes twinkle {
+  0%,100%{opacity:0.2}
+  50%{opacity:1}
+}
+
+/* Moon */
+.moon {
+  position:absolute;
+  top:10%;
+  right:10%;
+  width:110px; height:110px;
+  background: radial-gradient(circle, #fdfbd3 60%, #f5f3ce 100%);
+  border-radius:50%;
+  box-shadow:0 0 80px #fff, 0 0 160px rgba(255,255,255,0.4);
+}
+
+/* Center Wrapper */
+.center-wrapper {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+/* Intro Screen */
+#intro {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  z-index:1000;
+}
+#intro h1 {
+  font-size:3rem;
+  letter-spacing:3px;
+  animation: zoomFade 3s ease forwards;
+}
+@keyframes zoomFade {
+  0% { opacity:0; transform: scale(0.5); }
+  50% { opacity:1; }
+  100% { opacity:0; transform: scale(1.2); }
+}
+
+/* Main Content */
+#main {
+  opacity:0;
+  transition: opacity 1.5s ease;
+  width:100%;
+  max-width:800px;
+}
+#main.show {
+  opacity:1;
+}
+
+.message {
+  font-size:1.15rem;
+  line-height:1.6;
+  text-align:center;
+  background: rgba(255,255,255,0.05);
+  padding:22px;
+  border-radius:20px;
+  backdrop-filter: blur(16px);
+  box-shadow:0 0 40px rgba(255,255,255,0.08);
+  animation: fadeIn 2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(30px);} 
+  to { opacity:1; transform: translateY(0);} 
+}
+
+/* Responsive */
+@media (max-width:600px) {
+  #intro h1 { font-size:2rem; }
+  .message { font-size:1rem; padding:20px; }
+  .moon { width:70px; height:70px; }
+}
+</style>
 </head>
 <body>
 
-<!-- Loading Screen -->
-<div id="loader">
-  <div class="loader-content">
-    <div class="spinner"></div>
-    <h2>Loading...</h2>
+<div class="background">
+  <div class="moon"></div>
+  <div id="stars"></div>
+</div>
+
+<div id="intro">
+  <h1>Shahid Saleem</h1>
+</div>
+
+<div class="center-wrapper">
+  <div id="main">
+    <div class="message" id="text"></div>
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast"></div>
+<script>
+// Generate stars across full screen (dense sky look)
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 220; i++) {
+  let star = document.createElement('div');
+  star.classList.add('star');
 
-<!-- Confirm Modal -->
-<div id="confirmModal" class="modal">
-  <div class="modal-content small">
-    <p id="confirmText"></p>
-    <div class="modal-actions">
-      <button id="confirmYes">Yes</button>
-      <button onclick="closeConfirm()">Cancel</button>
-    </div>
-  </div>
-</div>
+  let size = Math.random() * 3;
+  star.style.width = size + 'px';
+  star.style.height = size + 'px';
 
-<!-- Add Hadith Modal -->
-<div id="hadithModal" class="modal">
-  <div class="modal-content">
-    <h2>Add Hadith</h2>
+  star.style.top = Math.random() * 100 + 'vh';
+  star.style.left = Math.random() * 100 + 'vw';
+  star.style.animationDelay = Math.random() * 3 + 's';
 
-    <select id="categorySelect"></select>
-    <input type="text" id="newCategory" placeholder="Or Create New Category">
+  starsContainer.appendChild(star);
+}
 
-    <textarea id="hadithText" placeholder="Enter Hadith Text"></textarea>
-    <input type="text" id="hadithReference" placeholder="Reference">
+// Transition
+setTimeout(() => {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('main').classList.add('show');
+  typeText();
+}, 3500);
 
-    <button onclick="saveHadith()">Save Hadith</button>
-  </div>
-</div>
+// Typing Effect (preserves line breaks)
+const message = `Be kind to yourself. The Prophet ﷺ shared a beautiful hadith: It is not permissible for a Muslim to humiliate himself.\n\nThey asked: O Messenger of Allah, how does he humiliate himself?\n\nHe replied: By burdening himself with trials that he cannot bear.\n\nDo not carry more than your soul can handle. Take it easy on yourself, bit by bit.`;
 
-<!-- Navigation -->
-<header>
-  <div class="logo">Shahid Saleem</div>
+let index = 0;
+function typeText() {
+  if (index < message.length) {
+    const char = message.charAt(index);
+    document.getElementById('text').innerHTML += (char === '\n') ? '<br>' : char;
+    index++;
+    setTimeout(typeText, 18);
+  }
+}
+</script>
 
-  <div class="nav-right">
-    <input type="text" id="searchInput" placeholder="Search...">
-    <button onclick="toggleTheme()">🌙</button>
-    <button onclick="openModal()">Add Hadith +</button>
-  </div>
-</header>
-
-<!-- Main Content -->
-<main id="app"></main>
-
-<script src="script.js"></script>
 </body>
 </html>
